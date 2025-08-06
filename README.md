@@ -19,12 +19,13 @@ docx2txt file.docx
 docx2txt -i /tmp/img_dir file.docx
 ```
 b. From python:
+
 ```python
 import docx2txt
 
 # extract text
-text = docx2txt.process("file.docx")
+text = docx2txt.run("file.docx")
 
 # extract text and write images in /tmp/img_dir
-text = docx2txt.process("file.docx", "/tmp/img_dir") 
+text = docx2txt.run("file.docx", "/tmp/img_dir") 
 ```
