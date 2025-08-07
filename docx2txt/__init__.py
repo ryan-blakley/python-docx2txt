@@ -1,32 +1,27 @@
-import argparse
-import os
-import re
-import sys
 import xml.etree.ElementTree as ET
-import zipfile
+
+from argparse import ArgumentParser
+from os import makedirs
+from os.path import basename, exists, join, splitext
+from re import match
+from sys import exit
+from zipfile import ZipFile
 
 
 nsmap = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
 
 
 def process_args():
-    parser = argparse.ArgumentParser(description="A pure python-based utility to extract text and images from docx"
-                                                 " files.")
+    parser = ArgumentParser(description="A pure python-based utility to extract text and images from docx files.")
     parser.add_argument("docx", help="Path of the docx file to run on.")
-    parser.add_argument('-i', '--img_dir', help="Path of directory to extract images to.")
+    parser.add_argument('-e', '--extract_imgs', action='store_true',
+                        help="Extract all images into a sub directory named after the docx filename.")
 
     args = parser.parse_args()
 
-    if not os.path.exists(args.docx):
+    if not exists(args.docx):
         print('File {} does not exist.'.format(args.docx))
-        sys.exit(1)
-
-    if args.img_dir is not None and not os.path.exists(args.img_dir):
-        try:
-            os.makedirs(args.img_dir)
-        except OSError:
-            print("Unable to create img_dir {}".format(args.img_dir))
-            sys.exit(1)
+        exit(1)
     return args
 
 
@@ -69,14 +64,14 @@ def run():
     ret_text = u''
 
     # unzip the docx in memory
-    zipf = zipfile.ZipFile(args.docx)
+    zipf = ZipFile(args.docx)
     filelist = zipf.namelist()
 
     # get header text
     # there can be 3 header files in the zip
     header_xmls = 'word/header\d*.xml'
     for fname in filelist:
-        if re.match(header_xmls, fname):
+        if match(header_xmls, fname):
             ret_text += xml2text(zipf.read(fname))
 
     # get main text
@@ -87,15 +82,17 @@ def run():
     # there can be 3 footer files in the zip
     footer_xmls = 'word/footer\d*.xml'
     for fname in filelist:
-        if re.match(footer_xmls, fname):
+        if match(footer_xmls, fname):
             ret_text += xml2text(zipf.read(fname))
 
-    if args.img_dir is not None:
+    if args.extract_imgs:
         # extract images
+        out_dir = f"{args.docx}-images"
+        makedirs(out_dir, exist_ok=True)
         for fname in filelist:
-            _, extension = os.path.splitext(fname)
+            _, extension = splitext(fname)
             if extension in [".jpg", ".jpeg", ".png", ".bmp"]:
-                dst_fname = os.path.join(args.img_dir, os.path.basename(fname))
+                dst_fname = join(out_dir, basename(fname))
                 with open(dst_fname, "wb") as dst_f:
                     dst_f.write(zipf.read(fname))
 
