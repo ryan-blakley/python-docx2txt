@@ -14,7 +14,7 @@ if __name__ == "__main__":
         author='Ryan Blakley',
         author_email='rblakley@redhat.com',
         url='https://github.com/ryan-blakley/python-docx2txt',
-        version='0.10',
+        version='0.11',
         keywords=['python', 'docx', 'text', 'images', 'extract'],
         packages=find_packages(),
         entry_points=entry_points,

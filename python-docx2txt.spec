@@ -1,5 +1,5 @@
 Name:           python-docx2txt
-Version:        0.10
+Version:        0.11
 Release:        1%{?dist}
 Summary:        A pure python-based utility to extract text and images from docx files.
 
@@ -32,6 +32,9 @@ A pure python-based utility to extract text and images from docx files.
 %{python3_sitelib}/*
 
 %changelog
+* Mon Aug 11 2025 Ryan Blakley <rblakley@redhat.com> 0.11-1
+- Switch how images are extracted (rblakley@redhat.com)
+
 * Wed Aug 06 2025 Ryan Blakley <rblakley@redhat.com> 0.10-1
 - new package built with tito
 
